@@ -23,11 +23,11 @@ public class AccountManagement implements AccountDAO {
 			prepstmt.setString(2, account.getUsername());
 			prepstmt.setString(3, account.getPassword());
 			prepstmt.executeUpdate();
+			addBill(userId);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
+		return userId;
 	}
 
 	@Override
@@ -37,7 +37,6 @@ public class AccountManagement implements AccountDAO {
 		try {
 			con.makeQuery();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 			
@@ -50,17 +49,50 @@ public class AccountManagement implements AccountDAO {
 		try {
 			res = con.getRs();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return res;
 	}
 	
+	@Override
+	public void changePassword(String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String addBill(String userId) {
+		Bill bill = new Bill(userId);
+		String billId = generateBillId();
+		bill.setBillId(billId);
+		try {
+			con.setQuery("INSERT INTO bills (`billId`, `userId`, `cash`) VALUES (?, ?, ?);");
+			prepstmt = con.getPrepstmt();
+			prepstmt.setString(1, bill.getBillId());
+			prepstmt.setString(2, bill.getUserId());
+			prepstmt.setDouble(3, bill.getCash());
+			prepstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return billId;
+	}
+
 	
-	//Method for generating user id
+	
+	//Methods for generating user id and bill id
 	private String generateUserId() {
 		Calendar data = Calendar.getInstance();
 		String id = "" + Math.round(Math.random()*1000 + data.getTimeInMillis());
 		return id;
 	}
+	
+	private String generateBillId() {
+		Calendar data = Calendar.getInstance();
+		String id = "" + data.get(Calendar.YEAR)+ "" + data.get(Calendar.MONTH) + "" + data.get(Calendar.DAY_OF_MONTH) + "" +data.getTimeInMillis();
+		return id;
+		
+	}
+
 }

@@ -12,4 +12,10 @@ public interface AccountDAO {
 	
 	//Get account by user id
 	public ResultSet getAccount(String username);
+	
+	//Change password
+	public void changePassword(String username);
+	
+	//Create new bill for account
+	public String addBill(String userId);
 }
